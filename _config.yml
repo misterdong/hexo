@@ -8,7 +8,7 @@ subtitle: 等待·希望
 description: 永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”
 keywords:
 author: dong
-language: zh_CN
+language: zh-Hans
 timezone: UTC
 
 # URL
@@ -83,7 +83,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: hexo-theme-matery
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
