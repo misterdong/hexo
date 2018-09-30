@@ -4,7 +4,8 @@
  - Git
  - Hexo
 
-当安装玩Nodejs和Git后安装hexo
+当安装完Nodejs和Git后安装hexo
+
  ``` npm install -g hexo-cli ```
 
 #### 需要安装的插件
