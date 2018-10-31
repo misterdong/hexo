@@ -16,7 +16,7 @@ before_script:
 
 
 script:
-  - hexo generate
+  - hexo g
 
 after_script:
   - cd ./public
