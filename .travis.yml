@@ -16,6 +16,8 @@ before_script:
 
 
 script:
+  - git config user.name "misterdong"
+  - git config user.email "a895011874@163.com"
   - hexo c
   - hexo g
   - hexo d
