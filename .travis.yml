@@ -17,7 +17,7 @@ before_script:
 
 script:
   - hexo g
-
+  - cat archives/2018/09/index.html
 
 after_script:
   - cd ./public
