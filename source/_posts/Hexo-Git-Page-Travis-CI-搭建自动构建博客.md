@@ -1,4 +1,3 @@
----
 title: Hexo+Git Page+Travis CI 搭建自动构建博客
 date: 2018-10-31 16:49:00
 tags: hexo

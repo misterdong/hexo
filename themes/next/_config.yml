@@ -407,12 +407,21 @@ gitment:
   lazy: false # Comments lazy loading with a button
   cleanly: false # Hide 'Powered by ...' on footer, and more
   language: # Force language, or auto switch by theme
-  github_user: # MUST HAVE, Your Github ID
-  github_repo: # MUST HAVE, The repo you use to store Gitment comments
-  client_id: # MUST HAVE, Github client id for the Gitment
-  client_secret: # EITHER this or proxy_gateway, Github access secret token for the Gitment
+  github_user: misterdong
+  github_repo: https://github.com/misterdong/gitment-comments.git
+  client_id: a5d7514bc6cd14ea8b03
+  client_secret: bbf59c14bb87c5668ab94d2a343d25b694077944
   proxy_gateway: # Address of api proxy, See: https://github.com/aimingoo/intersect
   redirect_protocol: # Protocol of redirect_uri with force_redirect_protocol when mint enabled
+
+gitalk:
+  enable: true
+  githubID: misterdong  # 例：asdfv1929   
+  repo: misterdong.github.io   # 例：asdfv1929.github.io
+  ClientID: a5d7514bc6cd14ea8b03
+  ClientSecret: bbf59c14bb87c5668ab94d2a343d25b694077944
+  adminUser: misterdong #指定可初始化评论账户
+  distractionFreeMode: true
 
 # Baidu Share
 # Available value:
