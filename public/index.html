@@ -294,6 +294,207 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://misterdong.github.io/2019/05/28/mysql中的锁/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="米斯特动">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/28/mysql中的锁/" itemprop="url">mysql中的锁</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-27T20:54:16Z">
+                2019-05-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="读写锁（共享锁，排他锁）"><a href="#读写锁（共享锁，排他锁）" class="headerlink" title="读写锁（共享锁，排他锁）"></a>读写锁（共享锁，排他锁）</h4><p>读锁是共享的，或者说是互相不阻塞的。多个用户在同一时刻可以同时读取一个资源，而互不干扰。<br>写锁是排他的，即一个写锁或阻塞其他的写锁和读锁。</p>
+<p>加锁阶段：在该阶段能够进行加锁操作。在对不论什么数据进行读操作之前要申请并获得S锁（共享锁，其他事务能够继续加共享锁，但不能加排它锁），在进行写操作之前要申请并获得X锁（排它锁，其他事务不能再获得不论什么锁）。加锁不成功，则事务进入等待状态，直到加锁成功才继续运行。<br>解锁阶段：当事务释放了一个封锁以后，事务进入解锁阶段。在该阶段仅仅能进行解锁操作不能再进行加锁操作。</p>
+<h4 id="锁粒度"><a href="#锁粒度" class="headerlink" title="锁粒度"></a>锁粒度</h4><p>一种提供共享资源并发性的方式就是让锁定对象更具有选择性。</p>
+<h5 id="表锁（table-lock）"><a href="#表锁（table-lock）" class="headerlink" title="表锁（table lock）"></a>表锁（table lock）</h5><p>表锁是MySQL中最基本的锁策略，并且是开销最小的策略，它会锁定整张表。一个用户在对表进行写操作（插入、删除、更新等）前，需要先获得写锁，这会阻塞其他用户对该表的所有读写操作。<br>在特定的场景中，表锁也可能有良好的性能。例如，READ LOCAL表锁支持某些类型的兵法写操作。另外，写锁闭读锁有更高的优先级，因此一个写锁请求可能会被插入到读锁队列到前面（写锁可以插入到锁队列读锁的前面，反之读锁不能插入到锁队列写锁的前面）。</p>
+<h5 id="行级锁（row-lock）"><a href="#行级锁（row-lock）" class="headerlink" title="行级锁（row lock）"></a>行级锁（row lock）</h5><p>行级锁可以最大程度的支持并发处理（同时也带来了最大的锁开销）。</p>
+<h4 id="行锁，间隙锁，next-key锁"><a href="#行锁，间隙锁，next-key锁" class="headerlink" title="行锁，间隙锁，next-key锁"></a>行锁，间隙锁，next-key锁</h4><p> 行锁：record lock，记录锁<br> 间隙锁（辅助索引时）：以（主键，辅助索引）为间隙点，两个间隙点间的区域进行加锁。<br> next-key锁：包含了记录锁和间隙锁，即锁定一个范围，并且锁定记录本身，InnoDB默认的枷锁方式。</p>
+<p> 表结构：</p>
+<pre><code class="sql">CREATE TABLE `tbl_1` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `field` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+</code></pre>
+<p>如上，id为唯一自增主键，name为普通索引，field字段没有索引</p>
+<table>
+<thead>
+<tr>
+<th>id(主键)</th>
+<th>name(二级索引)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr>
+<td>6</td>
+<td>5</td>
+</tr>
+<tr>
+<td>8</td>
+<td>5</td>
+</tr>
+<tr>
+<td>10</td>
+<td>5</td>
+</tr>
+<tr>
+<td>13</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<p> 1）InnoDB是通过给索引上的索引项进行加锁来进行锁定的，只有通过索引进行数据的检索，才能使用行锁，否则，将使用表锁。<br>查询一：</p>
+<pre><code class="sql">BEGIN;
+SELECT * FROM tbl_1 FOR UPDATE;
+</code></pre>
+<p>查询二：</p>
+<pre><code class="sql">BEGIN;
+SELECT * FROM tbl_1 WHERE field=&quot;1&quot; FOR UPDATE;
+</code></pre>
+<p>上面查询一和查询二都会进行全表锁定。<br>2）任何非主键索引上的锁，最终都会追溯到主键上，即对主键索引进行加锁<br>查询三：</p>
+<pre><code class="sql">BEGIN;
+SELECT * FROM tbl_1 WHERE name=&quot;2&quot; FOR UPDATE;
+</code></pre>
+<p>查询四：</p>
+<pre><code class="sql">BEGIN;
+SELECT * FROM tbl_1 WHERE id=&quot;1&quot; FOR UPDATE;
+</code></pre>
+<p>上面查询三和查询四都锁定的都是id=1的那条记录。</p>
+<h5 id="间隙锁"><a href="#间隙锁" class="headerlink" title="间隙锁"></a>间隙锁</h5><p><strong>间隙锁的目的是为了防止幻读，其主要通过两个方面实现这个目的:</strong><br>（1）防止间隙内有新数据被插入<br>（2）防止已存在的数据，更新成间隙内的数据<br><strong>innodb自动使用间隙锁的条件：</strong><br>（1）必须在RR级别下<br>（2）检索条件必须有索引（没有索引的话，mysql会全表扫描，那样会锁定整张表所有的记录，包括不存在的记录，此时其他事务不能修改不能删除不能添加）</p>
+<p><strong>区间的划分方式</strong><br>根据name列，我们可以将记录分为以下几个区间，（-∞，2），（2，4），（4，5），（5，11），（11，+∞）。<br>只要区间内可以插入数据，则可以认为有间隙<br><strong>区间的锁定方式</strong><br>当锁定name=4的记录时，锁定的区间范围为左边最近的区间加上右边最近的区间，即（2，4），（4，5），与之对应被锁定的记录为{id=1，name=2},{id=3，name=4},{id=6，name=5}。<br>验证：</p>
+<pre><code class="sql">BEGIN;
+SELECT * FROM tbl_1  WHERE `name`=&#39;4&#39; FOR UPDATE;
+</code></pre>
+<pre><code class="sql">BEGIN;
+INSERT INTO tbl_1 VALUES (2,&#39;3&#39;,&#39;2&#39;);
+-- 阻塞
+INSERT INTO tbl_1 VALUES (2,&#39;4&#39;,&#39;2&#39;);
+-- 阻塞
+INSERT INTO tbl_1 VALUES (4,&#39;5&#39;,&#39;2&#39;);
+-- 阻塞
+INSERT INTO tbl_1 VALUES (4,&#39;6&#39;,&#39;2&#39;);
+-- 成功
+</code></pre>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://misterdong.github.io/2019/05/12/hexo添加评论功能-gitalk/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1265,7 +1466,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1287,7 +1488,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
