@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="redis,">
 
 
 
@@ -79,16 +79,18 @@
 
 
 
-<meta name="description" content="永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”">
-<meta property="og:type" content="website">
-<meta property="og:title" content="米斯特动">
-<meta property="og:url" content="https://misterdong.github.io/archives/2018/index.html">
+<meta name="description" content="redis过期时间消极方法（passive way）：在访问key时，如果发现过期，则进行删除  积极方法（active way）：周期性的从设置了过期时间的key中选择一部分的key进行删除   随机测试20个带有timeout信息的key进行测试   删除所有过期的key   如果超过25%的key被删除，则重复执行步骤1">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis学习之旅">
+<meta property="og:url" content="https://misterdong.github.io/2019/07/24/redis学习之旅/index.html">
 <meta property="og:site_name" content="米斯特动">
-<meta property="og:description" content="永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”">
+<meta property="og:description" content="redis过期时间消极方法（passive way）：在访问key时，如果发现过期，则进行删除  积极方法（active way）：周期性的从设置了过期时间的key中选择一部分的key进行删除   随机测试20个带有timeout信息的key进行测试   删除所有过期的key   如果超过25%的key被删除，则重复执行步骤1">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-23T10:27:48.923Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="米斯特动">
-<meta name="twitter:description" content="永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”">
+<meta name="twitter:title" content="redis学习之旅">
+<meta name="twitter:description" content="redis过期时间消极方法（passive way）：在访问key时，如果发现过期，则进行删除  积极方法（active way）：周期性的从设置了过期时间的key中选择一部分的key进行删除   随机测试20个带有timeout信息的key进行测试   删除所有过期的key   如果超过25%的key被删除，则重复执行步骤1">
 
 
 
@@ -118,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://misterdong.github.io/archives/2018/">
+  <link rel="canonical" href="https://misterdong.github.io/2019/07/24/redis学习之旅/">
 
 
 
 
 
-  <title>归档 | 米斯特动</title>
+  <title>redis学习之旅 | 米斯特动</title>
   
 
 
@@ -143,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -279,247 +281,216 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://misterdong.github.io/2019/07/24/redis学习之旅/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="米斯特动">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">redis学习之旅</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-24T02:27:04+08:00">
+                2019-07-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 11 篇日志。 继续努力。
-      </span>
 
-      
-
-        
-        
-        
-
-        
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2018">2018</h1>
-          </div>
-        
-        
+            
+          
 
-        
+          
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/12/13/Java高级路线/" itemprop="url">
-              
-                <span itemprop="name">Java高级路线</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-13T09:50:40Z" content="2018-12-13">
-          12-13
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+        </div>
+      </header>
+    
 
-
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/08/用node服务打开html文件/" itemprop="url">
-              
-                <span itemprop="name">用node服务打开html文件</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-11-08T14:50:13Z" content="2018-11-08">
-          11-08
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/01/Hexo-Git-Page-Travis-CI-搭建自动构建博客/" itemprop="url">
-              
-                <span itemprop="name">Hexo+Git Page+Travis CI 搭建自动构建博客</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-10-31T16:49:00Z" content="2018-10-31">
-          10-31
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <h4 id="redis过期时间"><a href="#redis过期时间" class="headerlink" title="redis过期时间"></a>redis过期时间</h4><p>消极方法（passive way）：在访问key时，如果发现过期，则进行删除 </p>
+<p>积极方法（active way）：周期性的从设置了过期时间的key中选择一部分的key进行删除 </p>
+<ol>
+<li><p>随机测试20个带有timeout信息的key进行测试 </p>
+</li>
+<li><p>删除所有过期的key </p>
+</li>
+<li><p>如果超过25%的key被删除，则重复执行步骤1 </p>
+</li>
+</ol>
+<a id="more"></a>
+<h4 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h4><h5 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h5><p>当符合【条件】条件的时候，fork子进程，把数据写到dump.rdb快照文件，不会对主进程操作进行影响 </p>
+<p>条件: </p>
+<p>配置规则，config文件 </p>
+<p>save seconds changes </p>
+<p>save 900 1 </p>
+<p>save 300 10 </p>
+<p>save 60 10000 </p>
+<p>save，会阻塞所有客户端的请求；bgsave，异步存储，不会阻塞 </p>
+<p>flushall，配置规则存在的情况下，执行一次快照 </p>
+<p>执行复制操作 </p>
+<p>缺点：数据丢失 </p>
+<h5 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h5><p>开启方式：redis.conf-&gt; append-only yes </p>
+<blockquote>
+<p>AOF 开启的情况下，默认从AOF中读取数据 </p>
+</blockquote>
+<h4 id="Redis的内存回收策略"><a href="#Redis的内存回收策略" class="headerlink" title="Redis的内存回收策略"></a>Redis的内存回收策略</h4><p>LRU</p>
+<p>maxmemory-policy  ：</p>
+<ul>
+<li>noeviction(默认)</li>
+<li>allkeys-lru 最少使用的数据淘汰</li>
+<li>allkeys-random 随机移除某些数据</li>
+<li>volatile-random/lru/ttl 从已经设置的过期时间的数据中随机淘汰/淘汰最少使用数据/淘汰即将过期的数据</li>
+</ul>
+<h4 id="Redis单线程为什么性能高"><a href="#Redis单线程为什么性能高" class="headerlink" title="Redis单线程为什么性能高"></a>Redis单线程为什么性能高</h4><p>采用多路复用机制</p>
+<h4 id="Lua脚本在Redis中的应用"><a href="#Lua脚本在Redis中的应用" class="headerlink" title="Lua脚本在Redis中的应用"></a>Lua脚本在Redis中的应用</h4><ol>
+<li>在应用中需要保证多个命令保证原子性，需要时用Lua脚本进行处理</li>
+<li>在使用pipeline管道模型时，减少网络开销取执行多个命令</li>
+<li>复用性</li>
+</ol>
+<p>在lua脚本中执行redis的命令</p>
+<p>redis.call(‘set’,’lua’,’value’)</p>
+<p>local val = redis.call(‘get’,’lua’)</p>
+<p>编写lua脚本文件，如demo.lua</p>
+<pre><code class="lua">return redis.call(&#39;get&#39;,&#39;lua&#39;)
+</code></pre>
+<p>执行：</p>
+<pre><code class="shell">./redis-cli --eval demo.lua
+</code></pre>
+<p>例：基于lua脚本实现ip限流</p>
+<p>便携lua文件 ratelimit.lua</p>
+<pre><code class="lua">local key=&quot;ratelimit:&quot;..KEYS[1]
+local limit=tonumber(ARGV[1])
+local expireTime=ARGV[2]
+local times = redis.call(&#39;incr&#39;,key)
+if times == 1 then
+  redis.call(&#39;expire&#39;,key,expireTime)
+end
+if times &gt; limit then
+  return 0
+end
+return 1
+</code></pre>
+<p>执行：</p>
+<pre><code class="shell">./redis-cli --eval ratelimit.lua 192.167.0.2,10 10
+</code></pre>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/10/08/蓝色降落伞/" itemprop="url">
-              
-                <span itemprop="name">蓝色降落伞</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-10-07T22:44:32Z" content="2018-10-07">
-          10-07
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/10/01/书摘/" itemprop="url">
-              
-                <span itemprop="name">书摘</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-09-30T16:15:55Z" content="2018-09-30">
-          09-30
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/09/28/2018书单/" itemprop="url">
-              
-                <span itemprop="name">2018书单</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-09-27T18:00:59Z" content="2018-09-27">
-          09-27
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/04/redis基础入门/" rel="next" title="redis基础入门">
+                <i class="fa fa-chevron-left"></i> redis基础入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/02/Spring-Cloud和Dubbo的差异对比/" rel="prev" title="Spring Cloud和Dubbo的差异对比">
+                Spring Cloud和Dubbo的差异对比 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -527,6 +498,12 @@
 
 
           
+
+  
+    <div id="gitalk-container"></div>
+  
+
+
 
         </div>
         
@@ -547,8 +524,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -608,6 +594,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#redis过期时间"><span class="nav-number">1.</span> <span class="nav-text">redis过期时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#持久化"><span class="nav-number">2.</span> <span class="nav-text">持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#RDB"><span class="nav-number">2.1.</span> <span class="nav-text">RDB</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AOF"><span class="nav-number">2.2.</span> <span class="nav-text">AOF</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis的内存回收策略"><span class="nav-number">3.</span> <span class="nav-text">Redis的内存回收策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis单线程为什么性能高"><span class="nav-number">4.</span> <span class="nav-text">Redis单线程为什么性能高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lua脚本在Redis中的应用"><span class="nav-number">5.</span> <span class="nav-text">Lua脚本在Redis中的应用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -741,6 +743,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
