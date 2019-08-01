@@ -9,7 +9,7 @@ auther: dong
 #### 创建github博客仓库 
 ##### 创建静态页面仓库
 首先，在github上新建一个仓库，仓库名为：<用户名>.github.io,这个仓库用来存放博客的静态页面。
-![](https://ws1.sinaimg.cn/large/0067tRJGly1fwrk9pz0esj30lo0gwtb4.jpg)
+![](https://raw.githubusercontent.com/misterdong/img/master/blog0067tRJGly1fwrk9pz0esj30lo0gwtb4.jpg)
 关于github page的发布方式有以下三种方式，
 1. master分支直接发布
 2. gh-pages分支发布
@@ -42,7 +42,7 @@ Hexo前置操作
 ##### 创建项目
 登陆[Travis CI](https://travis-ci.org),登陆时选择用github账号进行登陆，这样可以自动同步所有项目。
 然后到github的setting页面中完成[Access Token](https://github.com/settings/tokens)的申请，将其作为环境变量GH_TOKEN的值保存在环境参数里。
-![](https://ws1.sinaimg.cn/large/0067tRJGly1fwrkadlb73j30k40ie408.jpg)
+![](https://raw.githubusercontent.com/misterdong/img/master/blog0067tRJGly1fwrkadlb73j30k40ie408.jpg)
 >关于github的token需要注意下，github有提示，token生成后显示一次，之后就再也看不到了。。。
 
 ##### 创建travis设置文件
