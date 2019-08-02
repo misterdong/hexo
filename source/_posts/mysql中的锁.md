@@ -2,6 +2,7 @@
 title: mysql中的锁
 tags: mysql
 date: 2019-05-27 20:54:16
+categories: mysql
 ---
 
 #### 读写锁（共享锁，排他锁）

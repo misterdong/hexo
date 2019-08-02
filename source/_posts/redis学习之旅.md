@@ -2,6 +2,7 @@
 title: redis学习之旅
 date: 2019-07-23 18:27:04
 tags: redis
+categories: redis
 ---
 
 #### redis过期时间 

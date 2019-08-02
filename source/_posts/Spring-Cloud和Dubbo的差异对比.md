@@ -2,6 +2,7 @@
 title: Spring Cloud和Dubbo的差异对比
 date: 2019-08-01 17:07:57
 tags: [Spring Cloud,Dubbo]
+categories: 微服务
 ---
 Dubbo，阿里巴巴服务化治理的核心框架，一款高性能的RPC框架，后捐献给apache基金会。
 

@@ -1,7 +1,8 @@
 ---
 title: redis基础入门
 date: 2019-07-03 17:48:08
-tags:
+tags: redis
+categories: redis
 ---
 
 redis ,基于key-value的数据存储系统，存储在内存中，读取速度快，支持持久化。
