@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"misterdong.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="HTTP头字段（英语：HTTP header fields）是指在超文本传输协议（HTTP）的请求和响应消息中的消息头部分。它们定义了一个超文本传输协议事务中的操作参数。HTTP头部字段可以自己根据需要定义，因此可能在 Web 服务器和浏览器上发现非标准的头字段。">
+<meta name="keywords" content="http">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http header头字段解析">
+<meta property="og:url" content="https://misterdong.github.io/2020/07/28/http-header-tou-zi-duan-jie-xi/index.html">
+<meta property="og:site_name" content="米斯特动">
+<meta property="og:description" content="HTTP头字段（英语：HTTP header fields）是指在超文本传输协议（HTTP）的请求和响应消息中的消息头部分。它们定义了一个超文本传输协议事务中的操作参数。HTTP头部字段可以自己根据需要定义，因此可能在 Web 服务器和浏览器上发现非标准的头字段。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-07-27T09:38:10.063Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="http header头字段解析">
+<meta name="twitter:description" content="HTTP头字段（英语：HTTP header fields）是指在超文本传输协议（HTTP）的请求和响应消息中的消息头部分。它们定义了一个超文本传输协议事务中的操作参数。HTTP头部字段可以自己根据需要定义，因此可能在 Web 服务器和浏览器上发现非标准的头字段。">
+
+<link rel="canonical" href="https://misterdong.github.io/2020/07/28/http-header-tou-zi-duan-jie-xi/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>http header头字段解析 | 米斯特动</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"><script src="/js/prism.js"></script></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">米斯特动</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">等待·希望</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://misterdong.github.io/2020/07/28/http-header-tou-zi-duan-jie-xi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dong">
+      <meta itemprop="description" content="永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="米斯特动">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          http header头字段解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-07-27 17:01:20 / Modified: 09:38:10" itemprop="dateCreated datePublished" datetime="2020-07-27T17:01:20Z">2020-07-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/http/" itemprop="url" rel="index"><span itemprop="name">http</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>HTTP头字段（英语：HTTP header fields）是指在超文本传输协议（HTTP）的请求和响应消息中的消息头部分。它们定义了一个超文本传输协议事务中的操作参数。HTTP头部字段可以自己根据需要定义，因此可能在 Web 服务器和浏览器上发现非标准的头字段。<br><a id="more"></a></p>
+<h3 id="基本格式"><a href="#基本格式" class="headerlink" title="基本格式"></a>基本格式</h3><p>协议头的字段，是在请求（request）或响应（response）行（一条消息的第一行内容）之后传输的。协议头的字段是以明文的字符串格式传输，是以冒号分隔的键名与键值对，以回车(CR)加换行(LF)符号序列结尾。协议头部分的结尾以一个空白字段标识，结果就是，也就是传输两个连续的CR+LF。在历史上，很长的行曾经可能以多个短行的形式传输；在下一行的开头，输出一个空格(SP)或者一个水平制表符(HT)，表示它是一个后续行。在如今，这种换行形式已经被废弃。</p>
+<h3 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h3><p>HTTP 头字段根据实际用途被分为以下 4 种类型：</p>
+<ul>
+<li>通用头字段(英语：General Header Fields)</li>
+<li>请求头字段(英语：Request Header Fields)</li>
+<li>响应头字段(英语：Response Header Fields)</li>
+<li>实体头字段(英语：Entity Header Fields)</li>
+</ul>
+<h3 id="字段名"><a href="#字段名" class="headerlink" title="字段名"></a>字段名</h3><p>在 RFC 7230、RFC 7231、RFC 7232、RFC 7233、RFC 7234 和 RFC 7235 中，对一组核心字段进行了标准化。有一份关于这些字段的官方登记，以及一些列的补充规范，由IANA（The Internet Assigned Numbers Authority，互联网数字分配机构）维护。各个应用程序也可以自行定义额外的字段名和相应的值。IANA维护的头字段的<a href="https://www.iana.org/assignments/message-headers/message-headers.xml#perm-headers" target="_blank" rel="noopener">永久登记表</a>和<a href="https://www.iana.org/assignments/message-headers/message-headers.xml#prov-headers" target="_blank" rel="noopener">临时登记表</a>。</p>
+<p>有时我们可以看到有些字段名称前加有<code>X-</code>前缀进行标识，是用来标识这是个非标准的协议头字段，这一惯例已在2012年6月被废弃。同样的曾经有使用<code>Downgraded-</code>的限制也在2013年3月被解除。</p>
+<h3 id="大小限制"><a href="#大小限制" class="headerlink" title="大小限制"></a>大小限制</h3><p>标准中没有对每个协议头字段的名称和值的大小设置任何限制，也没有限制字段的个数。然而，出于实际场景及安全性的考虑，大部分的服务器、客户端和代理软件都会实施一些限制。例如，Apache 2.3服务器在默认情况下限制每个字段的大小不得超过8190字节，同时，单个请求中最多有100个头字段。</p>
+<h3 id="常见请求字段"><a href="#常见请求字段" class="headerlink" title="常见请求字段"></a>常见请求字段</h3><table>
+<thead>
+<tr>
+<th>协议头字段名</th>
+<th>说明</th>
+<th>示例</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accept</td>
+<td>能够接受的回应内容类型（Content-Types）</td>
+<td>Accept: text/plain</td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Accept-Charset</td>
+<td>能够接受的字符集</td>
+<td><code>Accept-Charset: utf-8</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Accept-Encoding</td>
+<td>能够接受的编码方式列表。参考<a href="https://zh.wikipedia.org/wiki/HTTP压缩" target="_blank" rel="noopener">HTTP压缩</a>。</td>
+<td><code>Accept-Encoding: gzip, deflate</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Accept-Language</td>
+<td>能够接受的回应内容的自然语言列表。参考 <a href="https://zh.wikipedia.org/wiki/内容协商" target="_blank" rel="noopener">内容协商</a> 。</td>
+<td><code>Accept-Language: en-US</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Authorization</td>
+<td>用于超文本传输协议的认证的认证信息</td>
+<td><code>Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td><a href="https://zh.wikipedia.org/wiki/网页快照" target="_blank" rel="noopener">Cache-Control</a></td>
+<td>用来指定在这次的请求/响应链中的所有缓存机制 都必须 遵守的指令</td>
+<td><code>Cache-Control: no-cache</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Content-Length</td>
+<td>以 八位字节数组 （8位的字节）表示的请求体的长度</td>
+<td><code>Content-Length: 348</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Content-Type</td>
+<td>请求体的 多媒体类型 （用于POST和PUT请求中）</td>
+<td><code>Content-Type: application/x-www-form-urlencoded</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>发送该消息的日期和时间(按照 RFC 7231 中定义的”超文本传输协议日期”格式来发送)</td>
+<td><code>Date: Tue, 15 Nov 1994 08:12:31 GMT</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>User-Agent</td>
+<td>浏览器的<a href="https://zh.wikipedia.org/wiki/用户代理" target="_blank" rel="noopener">浏览器身份标识字符串</a></td>
+<td><code>User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/21.0</code></td>
+<td>常设</td>
+</tr>
+<tr>
+<td>Origin</td>
+<td>发起一个针对 跨来源资源共享 的请求（要求服务器在回应中加入一个‘访问控制-允许来源’（’Access-Control-Allow-Origin’）字段）。</td>
+<td><code>Origin: http://www.example-social-network.com</code></td>
+<td>常设: 标准</td>
+</tr>
+<tr>
+<td>Cookie</td>
+<td>之前由服务器通过 Set- Cookie （下文详述）发送的一个 超文本传输协议Cookie</td>
+<td><code>Cookie: $Version=1; Skin=new;</code></td>
+<td>常设: 标准</td>
+</tr>
+</tbody>
+</table>
+<h3 id="常见响应字段"><a href="#常见响应字段" class="headerlink" title="常见响应字段"></a>常见响应字段</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>说明</th>
+<th>例子</th>
+<th style="text-align:center">状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Access-Control-Allow-Origin</td>
+<td>指定哪些网站可参与到跨来源资源共享过程中</td>
+<td><code>Access-Control-Allow-Origin: *</code></td>
+<td style="text-align:center">临时</td>
+</tr>
+<tr>
+<td>Accept-Patch</td>
+<td>指定服务器支持的文件格式类型。</td>
+<td><code>Accept-Patch: text/example;charset=utf-8</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Accept-Ranges</td>
+<td>这个服务器支持哪些种类的部分内容范围</td>
+<td><code>Accept-Ranges: bytes</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Age</td>
+<td>这个对象在代理缓存中存在的时间，以秒为单位</td>
+<td><code>Age: 12</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Allow</td>
+<td>对于特定资源有效的动作。针对HTTP/405这一错误代码而使用</td>
+<td><code>Allow: GET, HEAD</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td><a href="https://zh.wikipedia.org/wiki/网页快照" target="_blank" rel="noopener">Cache-Control</a></td>
+<td>向从服务器直到客户端在内的所有缓存机制告知，它们是否可以缓存这个对象。其单位为秒</td>
+<td><code>Cache-Control: max-age=3600</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Connection</td>
+<td>针对该连接所预期的选项</td>
+<td><code>Connection: close</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Content-Disposition</td>
+<td>一个可以让客户端下载文件并建议文件名的头部。文件名需要用双引号包裹。</td>
+<td><code>Content-Disposition: attachment; filename=&quot;fname.ext&quot;</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Content-Encoding</td>
+<td>在数据上使用的编码类型。参考 超文本传输协议压缩 。</td>
+<td><code>Content-Encoding: gzip</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Content-Language</td>
+<td>内容所使用的语言</td>
+<td><code>Content-Language: da</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Content-Length</td>
+<td>回应消息体的长度，以 字节 （8位为一字节）为单位</td>
+<td><code>Content-Length: 348</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Content-Location</td>
+<td>所返回的数据的一个候选位置</td>
+<td><code>Content-Location: /index.htm</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Content-Range</td>
+<td>这条部分消息是属于某条完整消息的哪个部分</td>
+<td><code>Content-Range: bytes 21010-47021/47022</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Content-Type</td>
+<td>当前内容的<a href="https://zh.wikipedia.org/wiki/MIME" target="_blank" rel="noopener">MIME</a>类型</td>
+<td><code>Content-Type: text/html; charset=utf-8</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>此条消息被发送时的日期和时间(按照 RFC 7231 中定义的“超文本传输协议日期”格式来表示)</td>
+<td><code>Date: Tue, 15 Nov 1994 08:12:31 GMT</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Expires</td>
+<td>指定一个日期/时间，超过该时间则认为此回应已经过期</td>
+<td><code>Expires: Thu, 01 Dec 1994 16:00:00 GMT</code></td>
+<td style="text-align:center">常设: 标准</td>
+</tr>
+<tr>
+<td>Last-Modified</td>
+<td>所请求的对象的最后修改日期(按照 RFC 7231 中定义的“超文本传输协议日期”格式来表示)</td>
+<td><code>Last-Modified: Tue, 15 Nov 1994 12:45:26 GMT</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td><a href="https://zh.wikipedia.org/wiki/HTTP_Location" target="_blank" rel="noopener">Location</a></td>
+<td>用来 进行重定向，或者在创建了某个新资源时使用。</td>
+<td><code>Location: http://www.w3.org/pub/WWW/People.html</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Proxy-Authenticate</td>
+<td>要求在访问代理时提供身份认证信息。</td>
+<td><code>Proxy-Authenticate: Basic</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Refresh</td>
+<td>用于设定可定时的重定向跳转。右边例子设定了5秒后跳转至“<code>http://www.w3.org/pub/WWW/People.html</code>”。</td>
+<td><code>Refresh: 5; url=http://www.w3.org/pub/WWW/People.html</code></td>
+<td style="text-align:center">专利并非标准Netscape实现的扩展，但大部分网页浏览器也支持。</td>
+</tr>
+<tr>
+<td>Retry-After</td>
+<td>如果某个实体临时不可用，则，此协议头用来告知客户端日后重试。其值可以是一个特定的时间段(以秒为单位)或一个超文本传输协议日期。</td>
+<td>Example 1: <code>Retry-After: 120</code>Example 2: <code>Retry-After: Fri, 07 Nov 2014 23:59:59 GMT</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Server</td>
+<td>服务器的名字</td>
+<td><code>Server: Apache/2.4.1 (Unix)</code></td>
+<td style="text-align:center">常设</td>
+</tr>
+<tr>
+<td>Set-Cookie</td>
+<td><a href="https://zh.wikipedia.org/wiki/Cookie" target="_blank" rel="noopener">HTTP cookie</a></td>
+<td><code>Set-Cookie: UserID=JohnDoe; Max-Age=3600; Version=1</code></td>
+<td style="text-align:center">常设: 标准</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/http/" rel="tag"># http</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/08/03/eureka-yuan-li-ji-yu-zookeeper-de-bi-jiao/" rel="prev" title="Eureka原理及与Zookeeper的比较">
+      <i class="fa fa-chevron-left"></i> Eureka原理及与Zookeeper的比较
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本格式"><span class="nav-number">1.</span> <span class="nav-text">基本格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类型"><span class="nav-number">2.</span> <span class="nav-text">类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字段名"><span class="nav-number">3.</span> <span class="nav-text">字段名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大小限制"><span class="nav-number">4.</span> <span class="nav-text">大小限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见请求字段"><span class="nav-number">5.</span> <span class="nav-text">常见请求字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见响应字段"><span class="nav-number">6.</span> <span class="nav-text">常见响应字段</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dong</p>
+  <div class="site-description" itemprop="description">永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

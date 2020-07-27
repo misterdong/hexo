@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"misterdong.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言根据git page的特性，我们可以利用其特点利用Hexo做一个依据静态页面生成的博客，网上有很多类似的教程。同时，为了保存博客源码，以及创作的便利性，我们使用travis进行自动构建，免去了一些hexo的操作。">
+<meta name="keywords" content="hexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo+Git Page+Travis CI 搭建自动构建博客">
+<meta property="og:url" content="https://misterdong.github.io/2018/11/01/hexo-git-page-travis-ci-da-jian-zi-dong-gou-jian-bo-ke/index.html">
+<meta property="og:site_name" content="米斯特动">
+<meta property="og:description" content="前言根据git page的特性，我们可以利用其特点利用Hexo做一个依据静态页面生成的博客，网上有很多类似的教程。同时，为了保存博客源码，以及创作的便利性，我们使用travis进行自动构建，免去了一些hexo的操作。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/misterdong/img/master/blog0067tRJGly1fwrk9pz0esj30lo0gwtb4.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/misterdong/img/master/blog0067tRJGly1fwrkadlb73j30k40ie408.jpg">
+<meta property="og:updated_time" content="2020-07-27T06:49:44.871Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo+Git Page+Travis CI 搭建自动构建博客">
+<meta name="twitter:description" content="前言根据git page的特性，我们可以利用其特点利用Hexo做一个依据静态页面生成的博客，网上有很多类似的教程。同时，为了保存博客源码，以及创作的便利性，我们使用travis进行自动构建，免去了一些hexo的操作。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/misterdong/img/master/blog0067tRJGly1fwrk9pz0esj30lo0gwtb4.jpg">
+
+<link rel="canonical" href="https://misterdong.github.io/2018/11/01/hexo-git-page-travis-ci-da-jian-zi-dong-gou-jian-bo-ke/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Hexo+Git Page+Travis CI 搭建自动构建博客 | 米斯特动</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"><script src="/js/prism.js"></script></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">米斯特动</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">等待·希望</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://misterdong.github.io/2018/11/01/hexo-git-page-travis-ci-da-jian-zi-dong-gou-jian-bo-ke/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dong">
+      <meta itemprop="description" content="永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="米斯特动">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hexo+Git Page+Travis CI 搭建自动构建博客
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-31 16:49:00" itemprop="dateCreated datePublished" datetime="2018-10-31T16:49:00Z">2018-10-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-07-27 06:49:44" itemprop="dateModified" datetime="2020-07-27T06:49:44Z">2020-07-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>根据git page的特性，我们可以利用其特点利用<a href="https://hexo.io/zh-cn/index.html" target="_blank" rel="noopener">Hexo</a>做一个依据静态页面生成的博客，网上有很多类似的教程。同时，为了保存博客源码，以及创作的便利性，我们使用travis进行自动构建，免去了一些hexo的操作。<br><a id="more"></a></p>
+<h4 id="创建github博客仓库"><a href="#创建github博客仓库" class="headerlink" title="创建github博客仓库"></a>创建github博客仓库</h4><h5 id="创建静态页面仓库"><a href="#创建静态页面仓库" class="headerlink" title="创建静态页面仓库"></a>创建静态页面仓库</h5><p>首先，在github上新建一个仓库，仓库名为：&lt;用户名&gt;.github.io,这个仓库用来存放博客的静态页面。<br><img src="https://raw.githubusercontent.com/misterdong/img/master/blog0067tRJGly1fwrk9pz0esj30lo0gwtb4.jpg" alt><br>关于github page的发布方式有以下三种方式，</p>
+<ol>
+<li>master分支直接发布</li>
+<li>gh-pages分支发布</li>
+<li>master分支下的/docs目录进行发布</li>
+</ol>
+<p>任性的人以上三种都不采用，我选用的是再建一个仓库去存放hexo博客的源码，每次生成文件后同步到静态页面的仓库，<br>&lt;用户名&gt;.github.io-&gt;Settings-&gt;GitHub Pages,source默认选择master即可。</p>
+<h5 id="源码仓库创建"><a href="#源码仓库创建" class="headerlink" title="源码仓库创建"></a>源码仓库创建</h5><p>Hexo前置操作</p>
+<blockquote>
+<p>安装git<br>安装nodejs</p>
+</blockquote>
+<p>具体安装方式请另行寻找，不在本章范围内。</p>
+<p>安装完以上两个软件后，即可进行hexo的安装。</p>
+<ol>
+<li>安装hexo项目<br><code>npm install -g hexo-cli</code></li>
+<li>生成hexo项目<br><code>hexo init [projectname]</code></li>
+<li>上传hexo源码到源码仓库<br><code>cd [projectname]</code><br><code>git add .</code><br><code>git commit -m &quot;提交源码&quot;</code><br><code>git push</code></li>
+</ol>
+<h4 id="使用Travis-CI进行自动构建"><a href="#使用Travis-CI进行自动构建" class="headerlink" title="使用Travis CI进行自动构建"></a>使用Travis CI进行自动构建</h4><h5 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h5><p>登陆<a href="https://travis-ci.org" target="_blank" rel="noopener">Travis CI</a>,登陆时选择用github账号进行登陆，这样可以自动同步所有项目。<br>然后到github的setting页面中完成<a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Access Token</a>的申请，将其作为环境变量GH_TOKEN的值保存在环境参数里。<br><img src="https://raw.githubusercontent.com/misterdong/img/master/blog0067tRJGly1fwrkadlb73j30k40ie408.jpg" alt></p>
+<blockquote>
+<p>关于github的token需要注意下，github有提示，token生成后显示一次，之后就再也看不到了。。。</p>
+</blockquote>
+<h5 id="创建travis设置文件"><a href="#创建travis设置文件" class="headerlink" title="创建travis设置文件"></a>创建travis设置文件</h5><p>让我们回到仓库本地目录，在该目录下新建一个.travis.yml文件，<br>文件内容如下：</p>
+<pre class=" language-yml"><code class="language-yml">language: node_js
+node_js: stable
+
+# Travis-CI Caching
+cache:
+  directories:
+    - node_modules
+
+
+# S: Build Lifecycle
+install:
+  - npm install
+
+before_script:
+ # - npm install -g gulp
+
+
+script:
+  - hexo g
+
+after_script:
+  - cd ./public
+  - git init
+  - git config user.name "yourname"
+  - git config user.email "your email"
+  - git add .
+  - git commit -m "Update blog"
+  - git push --force "https://${GH_TOKEN}@${GH_REF}" master:master
+# E: Build LifeCycle
+
+branches:
+  only:
+    - master
+env:
+ global:
+   - GH_REF: github.com/misterdong/misterdong.github.io.git
+</code></pre>
+<p>看到这里，我们就会发现travis其实就是一个帮你跑脚本的云主机命令行！<br>他按照我们指定的脚本顺序执行，先是install，再是before_script，script，最后是after_script.<br>branches指定了执行脚本的分支。<br>全局变量GH_REF指定了你的仓库地址。<br>我们首先用npm install在 travis 这台全新的主机上进行相关依赖的安装，这里就不需要重新再安装一遍 hexo 然后进行初始化了。安装完所需依赖之后，我们就可以直接使用 hexo 命令。<br>然后我们用hexo g命令来生成静态文件，生成的静态文件默认会被放在 public 目录下。<br>我们cd到public目录，用git init初始化仓库，进行相关信息的设置。<br>最后，travis-ci会将public目录下的文件全部 push 到你所创建的静态页面所在仓库的 master 分支上去。</p>
+<p>当在hexo源码所在位置新写完文章后，用git方式进行提交，travis会发现文件变化，触发自动构建。<br>至此，我们完成了博客自动化构建的基本设置。</p>
+<p>待续。。。。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/hexo/" rel="tag"># hexo</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/08/lan-se-jiang-luo-san/" rel="prev" title="蓝色降落伞">
+      <i class="fa fa-chevron-left"></i> 蓝色降落伞
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/08/yong-node-fu-wu-da-kai-html-wen-jian/" rel="next" title="用node服务打开html文件">
+      用node服务打开html文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建github博客仓库"><span class="nav-number">2.</span> <span class="nav-text">创建github博客仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建静态页面仓库"><span class="nav-number">2.1.</span> <span class="nav-text">创建静态页面仓库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#源码仓库创建"><span class="nav-number">2.2.</span> <span class="nav-text">源码仓库创建</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用Travis-CI进行自动构建"><span class="nav-number">3.</span> <span class="nav-text">使用Travis CI进行自动构建</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建项目"><span class="nav-number">3.1.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建travis设置文件"><span class="nav-number">3.2.</span> <span class="nav-text">创建travis设置文件</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dong</p>
+  <div class="site-description" itemprop="description">永远不要忘记，在上帝揭露人的未来以前，人类的一切智慧是包含在四个字里面的：“等待”和“希望”</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
